@@ -67,47 +67,27 @@ function Network(layerSizes, learnRate, momentum){
  * @return {Number} Result
  */
 Neuron.prototype.CalcOutput = function(){
-	/*var inputsTimesWeights = this.InputSynapses.map(s => s.Weight * s.InputNeuron.Output);
-	var sumIn = inputsTimesWeights.reduce((i,j) => i + j);*/
-	var sumIn = 0;
-	for (var i=0; i<this.InputSynapses.length; i++){
-		var synapse = this.InputSynapses[i];
-		sumIn += synapse.Weight * synapse.InputNeuron.Output;
-	}
+	var inputsTimesWeights = this.InputSynapses.map(s => s.Weight * s.InputNeuron.Output);
+	var sumIn = inputsTimesWeights.reduce((i,j) => i + j);
 	this.Output = sigmoid(sumIn + this.Bias);
 	return this.Output;
 }
 Neuron.prototype.CalcError = function(target){
 	return target-this.Output;
 }
-Neuron.prototype.CalcGrad1 = function(){
-	var inputTimesWeights = this.OutputSynapses.map(s => s.OutputNeuron.Gradient * s.Weight);
-	this.Gradient = inputTimesWeights.reduce((i,j) =>i+j) * sigmoid_deriv(this.Output);
-	return this.Gradient;
-}
-Neuron.prototype.CalcGrad2 = function(target){
-	this.Gradient = this.CalcError(target) * sigmoid_deriv(this.Output);
-	return this.Gradient;
-}
 Neuron.prototype.CalcGrad = function(target){
-	//console.log('b4: ' + this.Gradient);
+
 	if (target !== undefined){ // output layer
 		this.Gradient = this.CalcError(target) * sigmoid_deriv(this.Output);
 	}
 	else{ // hidden layers
-		//var inputTimesWeights = this.OutputSynapses.map(s => s.OutputNeuron.Gradient * s.Weight);
-		//this.Gradient = inputTimesWeights.reduce((i,j) =>i+j) * sigmoid_deriv(this.Output);
-		var sumOut = 0;
-		for (var i=0; i<this.OutputSynapses.length; i++){
-			var synapse = this.OutputSynapses[i];
-			sumOut += synapse.OutputNeuron.Gradient * synapse.Weight;
-		}
-		this.Gradient = sumOut * sigmoid_deriv(this.Output);
+		var inputTimesWeights = this.OutputSynapses.map(s => s.OutputNeuron.Gradient * s.Weight);
+		var sumOut  = inputTimesWeights.reduce((i,j) =>i+j);
+		this.Gradient =  sumOut * sigmoid_deriv(this.Output);
 	}
-	//console.log('af: ' + this.Gradient);
 	return this.Gradient;
 }
-Neuron.prototype.UpdateWeights = function(learnRate, momentum, isj1, ss){
+Neuron.prototype.UpdateWeights = function(learnRate, momentum){
 	var prevDelta = this.BiasDelta;
 	this.BiasDelta = learnRate * this.Gradient;
 	this.Bias += (this.BiasDelta + momentum * prevDelta);
@@ -129,7 +109,6 @@ Network.prototype.Train = function(data, epochs){
 			this.BackProp(data[j].Targets);
 			errors.push(this.CalcError(data[j].Targets));
 		}
-		//console.log('err: ' + errors.reduce((a,b)=>a+b)/errors.length);
 	}	
 }
 Network.prototype.ForwardProp = function(inputs){
@@ -141,19 +120,15 @@ Network.prototype.ForwardProp = function(inputs){
 }
 Network.prototype.BackProp = function(targets){
 	var i = 0;
-	//console.log(targets);
 	var outIdx = this.Layers.length-1;
-	//this.Layers[outIdx].forEach(a => a.CalcGrad2(targets[i++]));
-	for (var j=0; j<this.Layers[outIdx].length; j++)
-		this.Layers[outIdx][j].CalcGrad2(targets[j]);	
+	this.Layers[outIdx].forEach(a => a.CalcGrad(targets[i++]));
 
 	for (var j=outIdx-1; j>=1; j--){
-		this.Layers[j].forEach(a => a.CalcGrad1());
-		//console.log('A ' + j);
+		this.Layers[j].forEach(a => a.CalcGrad());
 	}
 	for (var j=1; j<this.Layers.length; j++){
 		for (var k=0; k<this.Layers[j].length; k++)
-			this.Layers[j][k].UpdateWeights(this.LearnRate,this.Momentum, j===1, this.Layers[j][k].InputSynapses[0]);
+			this.Layers[j][k].UpdateWeights(this.LearnRate,this.Momentum);
 	}
 }
 Network.prototype.Compute = function(inputs){
@@ -163,7 +138,8 @@ Network.prototype.Compute = function(inputs){
 }
 Network.prototype.CalcError = function(targets){
 	var i=0;
-	var absErrorByNeuron = this.Layers[this.Layers.length-1].map(a => Math.abs(a.CalcError(targets[i++])));
+	var outIdx = this.Layers.length-1;
+	var absErrorByNeuron = this.Layers[outIdx].map(a => Math.abs(a.CalcError(targets[i++])));
 	return absErrorByNeuron.reduce((a,b)=>a+b);
 }
 Network.prototype.PrintNetwork = function(){
