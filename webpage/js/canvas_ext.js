@@ -20,12 +20,12 @@ var trainingData = [];
 function drawPoint(x,y){
   
   var cls = document.getElementById("cbxBlue").checked;
-  var xCalc = x/600.0; //(x-300)/600.0
-  var yCalc = y/400.0; //(x-200)/400.0
+  var xCalc = x/600.0;
+  var yCalc = y/400.0;
   trainingData.push({input: [1, xCalc, yCalc], output: [cls ? 1 : 0]});
   w = train3();
 
-  // get stuff
+  // get canvas
   var c = document.getElementById("myCanvas");
   var ctx = c.getContext("2d");
  
@@ -75,20 +75,6 @@ function getMousePos(canvas, evt) {
 
 // Add event listener for `click` events.
 document.getElementById("myCanvas").addEventListener('click', function(event) {
-    
     var pt = getMousePos(document.getElementById("myCanvas"), event);
-    
     drawPoint(pt.x, pt.y);
-    
-    /*var x = event.pageX - elemLeft,
-        y = event.pageY - elemTop;
-
-    // Collision detection between clicked offset and element.
-    elements.forEach(function(element) {
-        if (y > element.top && y < element.top + element.height 
-            && x > element.left && x < element.left + element.width) {
-            alert('clicked an element');
-        }
-    });*/
-
 }, false);
