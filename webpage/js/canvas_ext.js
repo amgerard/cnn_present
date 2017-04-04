@@ -16,6 +16,10 @@ function train3() {
 
 var imageData = null;
 var trainingData = [];
+  
+// get canvas
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
 
 function drawPoint(x,y){
   
@@ -23,11 +27,11 @@ function drawPoint(x,y){
   var xCalc = x/600.0;
   var yCalc = y/400.0;
   trainingData.push({input: [1, xCalc, yCalc], output: [cls ? 1 : 0]});
-  w = train3();
+  drawPoints();
+}  
 
-  // get canvas
-  var c = document.getElementById("myCanvas");
-  var ctx = c.getContext("2d");
+function drawTrain(){
+  w = train3();
  
   ctx.clearRect(0, 0, c.width, c.height); 
   // reset
@@ -50,7 +54,10 @@ function drawPoint(x,y){
       //ctx.stroke();
     }
   }
-  
+  drawPoints();
+}
+
+function drawPoints(){
   //
   for (var i=0; i<trainingData.length; i++){
   ctx.beginPath();
