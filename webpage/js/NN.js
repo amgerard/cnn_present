@@ -6,6 +6,25 @@ function randomInit(){ return Math.random()*2-1; }
 // sigmoid activation
 function sigmoid(x) { return x<-45.0 ? 0.0 : x>45.0 ? 1.0 : 1.0/(1.0+Math.pow(Math.E, -x)); }
 function sigmoid_deriv(x) { return x * (1-x); }
+function Sigmoid() { }
+Sigmoid.prototype.Evaluate = sigmoid;
+Sigmoid.prototype.Derivative = sigmoid_deriv;
+
+// tanh activation
+function tanh_deriv(x) { return 1 / Math.pow(Math.cosh(x), 2); }
+function Tanh() { }
+Tanh.prototype.Evaluate = Math.tanh;
+Tanh.prototype.Derivative = tanh_deriv;
+
+// relu activation
+function relu(x) { return Math.max(0, x); }
+function relu_deriv(x) { return x > 0 ? 1 : 0; }
+function Relu() { }
+Relu.prototype.Evaluate = relu;
+Relu.prototype.Derivative = relu_deriv;
+
+// global activation
+var ACTIVATION = new Sigmoid();
 
 // Dataset class
 function DataSet(values, targets){
@@ -69,7 +88,7 @@ function Network(layerSizes, learnRate, momentum){
 Neuron.prototype.CalcOutput = function(){
 	var inputsTimesWeights = this.InputSynapses.map(s => s.Weight * s.InputNeuron.Output);
 	var sumIn = inputsTimesWeights.reduce((i,j) => i + j);
-	this.Output = sigmoid(sumIn + this.Bias);
+	this.Output = ACTIVATION.Evaluate(sumIn + this.Bias);
 	return this.Output;
 }
 Neuron.prototype.CalcError = function(target){
@@ -78,12 +97,12 @@ Neuron.prototype.CalcError = function(target){
 Neuron.prototype.CalcGrad = function(target){
 
 	if (target !== undefined){ // output layer
-		this.Gradient = this.CalcError(target) * sigmoid_deriv(this.Output);
+	    this.Gradient = this.CalcError(target) * ACTIVATION.Derivative(this.Output);
 	}
 	else{ // hidden layers
 		var inputTimesWeights = this.OutputSynapses.map(s => s.OutputNeuron.Gradient * s.Weight);
 		var sumOut  = inputTimesWeights.reduce((i,j) =>i+j);
-		this.Gradient =  sumOut * sigmoid_deriv(this.Output);
+		this.Gradient = sumOut * ACTIVATION.Derivative(this.Output);
 	}
 	return this.Gradient;
 }

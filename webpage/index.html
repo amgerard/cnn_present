@@ -12,21 +12,53 @@
 	</div>
 </div>
 
-<div class="center">
-<canvas id="myCanvas" width="600" height="400" style="border:1px solid #d3d3d3;">
-Your browser does not support the HTML5 canvas tag.</canvas>
-</div>
+    <div style="width: 100%; overflow: hidden;">
 
-<form action="">
-<input type="radio" id="cbxBlue" name="cls" checked="true">Blue<br>
-<input type="radio" id="cbxRed" name="cls">Red<br>
-</form>
-<button type="button" onclick="drawTrain()">Train Model</button>
- 
-<script src="js/NN.js"></script>
-<script src="js/canvas_ext.js" async></script>
-<script>
-</script>  
+        <div style="width: 200px; float: left; margin:100px">
+            <strong>Choose Class:</strong>
+            <form action="">
+                <input type="radio" id="cbxBlue" name="cls" checked="true">Blue
+                <input type="radio" id="cbxRed" name="cls">Red
+            </form>
+            <br /><br />
+
+            <strong>Activation:</strong>
+            <select id="selActivation">
+                <option selected>Sigmoid</option>
+                <option>Tanh</option>
+                <option>Relu</option>
+            </select>
+            <br /><br />
+
+            <strong>Learning Rate:</strong>
+            <input id="inLearningRate" width="1" type="number" step="0.03" value="0.4" min=".01" />
+            <br /><br />
+
+            <strong>Number of Epochs:</strong>
+            <select id="selNumEpochs">
+                <option>100</option>
+                <option selected>1000</option>
+                <option>10000</option>
+                <option>100000</option>
+                <option>1000000</option>
+            </select>
+            <br /><br />
+
+            <strong>Traing Model:</strong>
+            <button type="button" onclick="drawTrain()">Train Model</button>
+        </div>
+
+        <div class="center">
+            <canvas id="myCanvas" width="600" height="400" style="border:3px solid #d3d3d3;">
+                Your browser does not support the HTML5 canvas tag.
+            </canvas>
+        </div>
+    </div>
+
+    <script src="js/NN.js"></script>
+    <script src="js/canvas_ext.js" async></script>
+    <script>
+    </script>
 </body>
 </html>
 

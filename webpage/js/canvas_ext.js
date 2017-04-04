@@ -1,4 +1,5 @@
-var netA = new Network([2,4,4,1], 0.1, .5);
+var netA = new Network([2,4,4,1], 0.4);
+var NUM_EPOCHS = 1000;
 function train3() {
 	var data = [];
 	for (var i=0; i<trainingData.length; i++){
@@ -6,7 +7,7 @@ function train3() {
 		var y = trainingData[i]['output'];
 		data.push(new DataSet(x, [y]));
 	}
-	netA.Train(data, 1000);
+	netA.Train(data, NUM_EPOCHS);
 	W = [netA.Layers[1][0].Bias,
 	     netA.Layers[1][0].InputSynapses[0].Weight,
 	     netA.Layers[1][0].InputSynapses[1].Weight];
@@ -80,8 +81,31 @@ function getMousePos(canvas, evt) {
     };
 }
 
-// Add event listener for `click` events.
+// canvas click
 document.getElementById("myCanvas").addEventListener('click', function(event) {
     var pt = getMousePos(document.getElementById("myCanvas"), event);
     drawPoint(pt.x, pt.y);
+}, false);
+
+// num epochs changed
+document.getElementById("selNumEpochs").addEventListener('onchange', function (event) {
+    var numEpochs = document.getElementById("selNumEpochs").value;
+    NUM_EPOCHS = parseInt(numEpochs);
+}, false);
+
+// activation function changed
+document.getElementById("selActivation").addEventListener('onchange', function (event) {
+    var act = document.getElementById("selActivation").value;
+    if (act === "Sigmoid")
+        ACTIVATION = new Sigmoid();
+    if (act === "Tanh")
+        ACTIVATION = new Tanh();
+    if (act === "Relu")
+        ACTIVATION = new Relu();
+}, false);
+
+// learning rate changed
+document.getElementById("inLearningRate").addEventListener('onchange', function (event) {
+    var rate = document.getElementById("inLearningRate").value;
+    newA.LearnRate = parseFloat(rate);
 }, false);

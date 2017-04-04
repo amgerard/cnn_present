@@ -26,5 +26,16 @@ padding-top: 70px;
     margin: auto;
     width: 60%;
     /*order: 3px solid #73AD21;*/
-    padding: 10px;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.container{
+    display: flex;
+}
+.fixed{
+    width: 200px;
+}
+.flex-item{
+    flex-grow: 1;
 }
