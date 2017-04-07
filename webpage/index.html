@@ -15,7 +15,7 @@
     <div style="width: 100%; overflow: hidden;">
 
         <div style="width: 200px; float: left; margin:100px">
-            <strong>Choose Class:</strong>
+            <strong>Choose Class and Click Canvas:</strong>
             <form action="">
                 <input type="radio" id="cbxBlue" name="cls" checked="true">Blue
                 <input type="radio" id="cbxRed" name="cls">Red
@@ -36,16 +36,22 @@
 
             <strong>Number of Epochs:</strong>
             <select id="selNumEpochs">
-                <option>100</option>
-                <option selected>1000</option>
+                <option selected>100</option>
+                <option>1000</option>
                 <option>10000</option>
                 <option>100000</option>
                 <option>1000000</option>
             </select>
             <br /><br />
 
-            <strong>Traing Model:</strong>
-            <button type="button" onclick="drawTrain()">Train Model</button>
+            <!--strong>Traing Model:</strong
+            <button type="button" onclick="drawTrain()">Train Model</button-->
+            <strong>Inputs: 2</strong><br/>
+            <strong>Hidden: </strong><input oninput="hiddenChanged()" type="text" id="hidden" value="4 4" />
+            <strong>Outputs: 1</strong><br/>
+ 
+            <br /><br />
+	    <button type="button" onclick="restart()">Resart</button>
         </div>
 
         <div class="center">
@@ -56,8 +62,9 @@
     </div>
 
     <script src="js/NN.js"></script>
-    <script src="js/canvas_ext.js" async></script>
+    <script src="js/canvas_ext.js"></script>
     <script>
+	setInterval(drawTrain, 100);
     </script>
 </body>
 </html>

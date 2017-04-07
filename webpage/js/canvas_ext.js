@@ -1,26 +1,36 @@
-var netA = new Network([2,4,4,1], 0.4);
-var NUM_EPOCHS = 1000;
-function train3() {
+var LEARNING_RATE = 0.4;
+var NUM_EPOCHS = 100;
+var ARCH = [2,4,4,1];
+var NET = new Network(ARCH, LEARNING_RATE);
+
+var imageData = null;
+var trainingData = [];
+
+// get canvas
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+
+function train() {
 	var data = [];
 	for (var i=0; i<trainingData.length; i++){
 		var x = [trainingData[i]['input'][1],trainingData[i]['input'][2]];
 		var y = trainingData[i]['output'];
 		data.push(new DataSet(x, [y]));
 	}
-	netA.Train(data, NUM_EPOCHS);
-	W = [netA.Layers[1][0].Bias,
-	     netA.Layers[1][0].InputSynapses[0].Weight,
-	     netA.Layers[1][0].InputSynapses[1].Weight];
-	console.log(W);
-	return W;
+	NET.Train(data, NUM_EPOCHS);
 }
-
-var imageData = null;
-var trainingData = [];
-  
-// get canvas
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
+function restart() {
+  	ctx.clearRect(0, 0, c.width, c.height); 
+	trainingData = [];
+	NET = new Network(ARCH, LEARNING_RATE);
+}
+function hiddenChanged() {
+    var hidden = document.getElementById("hidden").value;
+    ARCH = [2].concat(hidden.split(" ").map(Number).filter(Boolean));
+    ARCH.push(1);
+    console.log(ARCH);
+    NET = new Network(ARCH, LEARNING_RATE);
+}
 
 function drawPoint(x,y){
   
@@ -32,7 +42,9 @@ function drawPoint(x,y){
 }  
 
 function drawTrain(){
-  w = train3();
+  if (trainingData.length === 0)
+    return;
+  w = train();
  
   ctx.clearRect(0, 0, c.width, c.height); 
   // reset
@@ -44,7 +56,7 @@ function drawTrain(){
       var xi = i / 600.0; 
       var yj = j / 400.0;
       //res = math.dot(w, [1, xi, yj])
-      res = netA.Compute([xi, yj])
+      res = NET.Compute([xi, yj])
       ctx.fillStyle = res >= 0.5 ? '#9999FF' : '#FF9999';
       ctx.fillRect(i,j,i+7,j+7);
       /*ctx.beginPath();
@@ -107,5 +119,5 @@ document.getElementById("selActivation").addEventListener('onchange', function (
 // learning rate changed
 document.getElementById("inLearningRate").addEventListener('onchange', function (event) {
     var rate = document.getElementById("inLearningRate").value;
-    newA.LearnRate = parseFloat(rate);
+    LEARNING_RATE = parseFloat(rate);
 }, false);
