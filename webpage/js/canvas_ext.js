@@ -22,13 +22,14 @@ function train() {
 function restart() {
   	ctx.clearRect(0, 0, c.width, c.height); 
 	trainingData = [];
+        printNumEpochs(0);
 	NET = new Network(ARCH, LEARNING_RATE);
 }
 function hiddenChanged() {
     var hidden = document.getElementById("hidden").value;
     ARCH = [2].concat(hidden.split(" ").map(Number).filter(Boolean));
     ARCH.push(1);
-    console.log(ARCH);
+    printNumEpochs(0);
     NET = new Network(ARCH, LEARNING_RATE);
 }
 
@@ -41,9 +42,16 @@ function drawPoint(x,y){
   drawPoints();
 }  
 
+function printNumEpochs(val){
+  var numEpochsEl = document.getElementById("printNumEpochs");
+  numEpochsEl.innerHTML = val !== undefined ? val : parseInt(numEpochsEl.innerHTML) + 100;
+  //console.log(numEpochsEl.value)
+}
+
 function drawTrain(){
   if (trainingData.length === 0)
     return;
+  printNumEpochs();
   w = train();
  
   ctx.clearRect(0, 0, c.width, c.height); 

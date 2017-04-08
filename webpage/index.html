@@ -34,8 +34,9 @@
             <input id="inLearningRate" width="1" type="number" step="0.03" value="0.4" min=".01" />
             <br /><br />
 
-            <strong>Number of Epochs:</strong>
-            <select id="selNumEpochs">
+            <strong>Number of Epochs:</strong><br/>
+            <p id="printNumEpochs">0</p>
+            <select hidden id="selNumEpochs">
                 <option selected>100</option>
                 <option>1000</option>
                 <option>10000</option>
@@ -52,12 +53,23 @@
  
             <br /><br />
 	    <button type="button" onclick="restart()">Resart</button>
+            <br /><br />
         </div>
+        
+	<!--div style="width: 300px; float: right; margin:100px">
+	</div-->
 
         <div class="center">
             <canvas id="myCanvas" width="600" height="400" style="border:3px solid #d3d3d3;">
                 Your browser does not support the HTML5 canvas tag.
             </canvas>
+            <p style="width:800px;">Instructions: Choose either the Red or Blue class and then click on the
+               canvas to add points for the chosen class. You can change the architecture
+               of the nework by adding/removing numbers from the 'Hidden' textbox. Each
+               number is the number of neurons in that hidden layer. It begins with '4 4'
+               which means you have 4 neurons in the first hidden layer and 4 neurons in the
+               second hidden layer. If you delete the hidden layers you are left with a
+	       linear classifier.</p>
         </div>
     </div>
 
