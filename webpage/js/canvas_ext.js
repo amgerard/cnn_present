@@ -50,6 +50,8 @@ function inputsChanged(cbInputs) {
 	var numIn = getInputs(cbInputs);
 	var tbxInputs = document.getElementById("tbxInputs");
 	tbxInputs.innerHTML = "Inputs: " + numIn;
+	var pInputs = document.getElementById("pInputs");
+	pInputs.innerHTML = numIn == 2 ? "[x1  x2]" : "[x1  x2  x1<sup>2</sup>  x2<sup>2</sup>]";
 	networkChanged(numIn);
 }
 
