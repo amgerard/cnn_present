@@ -13,8 +13,11 @@ var ctx = c.getContext("2d");
 function train() {
 	var data = [];
 	for (var i=0; i<trainingData.length; i++){
-		var x = [trainingData[i]['input'][1],trainingData[i]['input'][2]];
+		var x1 = trainingData[i]['input'][1];
+		var x2 = trainingData[i]['input'][2];
+		var x = [x1, x2].concat(getInputs() == 4 ? [x1*x1,x2*x2] : []);
 		var y = trainingData[i]['output'];
+		//console.log(x);
 		data.push(new DataSet(x, [y]));
 	}
 	NET.Train(data, NUM_EPOCHS);
@@ -25,12 +28,29 @@ function restart() {
         printNumEpochs(0);
 	NET = new Network(ARCH, LEARNING_RATE);
 }
+function getInputs(cbInputs) {
+	if (cbInputs === undefined)
+		cbInputs = document.getElementById("cbInputs");
+	return cbInputs.checked ? 4 : 2;
+}
+function getHidden() {
+	var hidden = document.getElementById("hidden").value;
+	return hidden.split(" ").map(Number).filter(Boolean);
+}
 function hiddenChanged() {
-    var hidden = document.getElementById("hidden").value;
-    ARCH = [2].concat(hidden.split(" ").map(Number).filter(Boolean));
-    ARCH.push(1);
-    printNumEpochs(0);
-    NET = new Network(ARCH, LEARNING_RATE);
+	networkChanged(getInputs());
+}
+function networkChanged(numIn) {
+	ARCH = [numIn].concat(getHidden()).concat([1]);
+	printNumEpochs(0);
+	//console.log(ARCH);
+	NET = new Network(ARCH, LEARNING_RATE);
+}
+function inputsChanged(cbInputs) {
+	var numIn = getInputs(cbInputs);
+	var tbxInputs = document.getElementById("tbxInputs");
+	tbxInputs.innerHTML = "Inputs: " + numIn;
+	networkChanged(numIn);
 }
 
 function drawPoint(x,y){
@@ -58,13 +78,13 @@ function drawTrain(){
   // reset
   //if (imageData !== null)    
   //  ctx.putImageData(imageData, 0, 0);
-  
+  var numIn = getInputs();
   for (var i = 0; i < 600; i+=7) {
     for (var j = 0; j < 400; j+=7) {
       var xi = i / 600.0; 
       var yj = j / 400.0;
       //res = math.dot(w, [1, xi, yj])
-      res = NET.Compute([xi, yj])
+      res = NET.Compute([xi, yj].concat(numIn == 4 ? [xi*xi,yj*yj] : []))
       ctx.fillStyle = res >= 0.5 ? '#9999FF' : '#FF9999';
       ctx.fillRect(i,j,i+7,j+7);
       /*ctx.beginPath();
